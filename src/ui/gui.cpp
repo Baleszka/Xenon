@@ -184,9 +184,6 @@ void setupGUI()
 
                 ImGui::Checkbox("Frame stepper", &frameStepper); ImGui::SameLine();
                 HelpMarker("Enables frame stepper.\nKeybinds:\nC -> Advance\nV -> Toggle\nB -> Step back");
-                
-                ImGui::Checkbox("Block Input", &blockInputs); ImGui::SameLine();
-                HelpMarker("Blocks inputs while replaying a macro.");
 
                 if (ImGui::BeginPopupModal("CBF", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
                 {
