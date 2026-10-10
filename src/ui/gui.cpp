@@ -10,7 +10,7 @@
 #include "../bot/xe.hpp"
 #include "../bot/tpsBypass.hpp"
 #include "../patches/releaseFix.hpp"
-// #include "../assist/trajectory.hpp"
+#include "../assist/trajectory.hpp"
 #include "../assist/autoclicker.hpp"
 
 #include <imgui-cocos.hpp>
@@ -185,6 +185,9 @@ void setupGUI()
                 ImGui::Checkbox("Frame stepper", &frameStepper); ImGui::SameLine();
                 HelpMarker("Enables frame stepper.\nKeybinds:\nC -> Advance\nV -> Toggle");
 
+                ImGui::Checkbox("Lock delta", &lockDelta); ImGui::SameLine();
+                HelpMarker("Runs the whole game one physics tick at a time\nso lag can't make the player skip ahead.");
+
                 ImGui::Checkbox("Block Inputs", &blockInputs); ImGui::SameLine();
                 HelpMarker("Blocks inputs while replaying a macro.");
 
@@ -246,25 +249,28 @@ void setupGUI()
                 ImGui::Checkbox("Inner", &showPlayerInner); ImGui::SameLine();
                 ImGui::Checkbox("Circle", &showPlayerCircle);
 
-                /*
-                ImGui::SeparatorText("Trajectory");
+                ImGui::SeparatorText("Trajectory##header");
 
-                ImGui::Checkbox("Show trajectory", &trajectory); ImGui::SameLine();
-                HelpMarker("Simulates where the player would go\nif you were to click or release.");
+                ImGui::Checkbox("Show trajectory", &showTrajectory); ImGui::SameLine();
+                HelpMarker("Simulates where the player would go\nif you were to click or release.\nOnly active while recording or playing.");
 
-                ImGui::Checkbox("Hold", &holdTrajectory); ImGui::SameLine();
+                ImGui::Checkbox("Hold##trajectory", &holdTrajectory); ImGui::SameLine();
                 HelpMarker("Player's trajectory if holding."); ImGui::SameLine();
-                ImGui::Checkbox("Relase", &releaseTrajectory); ImGui::SameLine();
+                ImGui::Checkbox("Release##trajectory", &releaseTrajectory); ImGui::SameLine();
                 HelpMarker("Player's trajectory if released."); ImGui::SameLine();
                 ImGui::Checkbox("Swift##trajectory", &swiftTrajectory); ImGui::SameLine();
                 HelpMarker("Player's trajectory if click and release\nwas made in the same frame.");
 
-                ImGui::DragFloat("Trail width", &trajectoryTrailWidth, 0.01f, 0.01f, 1.0f, "%.2f"); ImGui::SameLine();
+                ImGui::DragFloat("Trail width", &trajectoryTrailWidth, 0.01f, 0.01f, 2.0f, "%.2f"); ImGui::SameLine();
                 HelpMarker("How wide the trajectory trail is drawn.");
 
-                ImGui::DragInt("Trajectory length", &trajectoryLength, 20, 0, 1000000); ImGui::SameLine();
-                HelpMarker("How many frames forward to simulate\nthe trajectory for.\nHigher trail legth may affect performance.");
-                */
+                ImGui::DragInt("Trajectory length", &trajectoryLength, 1, 0, 10000, "%i Frames"); ImGui::SameLine();
+                HelpMarker("How many frames forward to simulate\nthe trajectory for.\nHigher trajectory length may affect performance.");
+
+                ImGui::ColorEdit3("Hold trajectory", holdTrajectoryCol);
+                ImGui::ColorEdit3("Release trajectory", releaseTrajectoryCol);
+                ImGui::ColorEdit3("Swift trajectory", swiftTrajectoryCol); ImGui::SameLine();
+                HelpMarker("Player 2 uses the inverted color.");
 
                 ImGui::SeparatorText("Autoclicker##header");
                 
