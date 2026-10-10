@@ -47,12 +47,15 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
         GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
     }
 
-    void processQueuedButtons(float dt, bool clearInputQueue) {
-        if (replayStatus == 2) {
+    void processQueuedButtons(float dt, bool clearInputQueue) 
+    {
+        if (replayStatus == 2) 
+        {
             return GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue);
         }
 
-        if (blockInputs && replayStatus == 1) {
+        if (blockInputs && replayStatus == 1) 
+        {
             m_queuedButtons.clear();
         }
 
