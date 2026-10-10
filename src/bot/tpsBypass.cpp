@@ -89,6 +89,15 @@ class $modify(TPSBypassGameLayer, GJBaseGameLayer)
             return;
         }
 
+        if (lockDeltaStep)
+        {
+            m_tpsOverflow = 0.0;
+            totalStepCount = 1;
+            estimatedStepCount = 1;
+            GJBaseGameLayer::update(dt);
+            return;
+        }
+
         calculateSteps(dt, static_cast<float>(getPhysicsDt()));
         if (estimatedStepCount > 0) { GJBaseGameLayer::update(dt); }
     }
