@@ -185,6 +185,9 @@ void setupGUI()
                 ImGui::Checkbox("Frame stepper", &frameStepper); ImGui::SameLine();
                 HelpMarker("Enables frame stepper.\nKeybinds:\nC -> Advance\nV -> Toggle\nB -> Step back");
                 
+                ImGui::Checkbox("Block Input", &blockInputs); ImGui::SameLine();
+                HelpMarker("Blocks inputs while replaying a macro.");
+
                 if (ImGui::BeginPopupModal("CBF", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
                 {
                     ImGui::Text("Are you sure you want to disable CBF?\nSub-frame clicked on will be discarded!\nDisabling CBF may cause your macro to break.");
