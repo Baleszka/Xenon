@@ -60,12 +60,12 @@ class $modify(ReplayPlayLayer, PlayLayer)
             // This fixes that :3
             // (i think)
             ignoreInputs = true;
-            if (!m_queuedButtons.back().m_isPush && !m_queuedButtons.back().m_isPlayer2)
+            if (!m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush && !m_queuedButtons.back().m_isPlayer2)
             {
                 GJBaseGameLayer::handleButton(false, static_cast<int>(PlayerButton::Jump), true);
                 ignoreInputs = false;
             }
-            else if (!m_queuedButtons.back().m_isPush && m_queuedButtons.back().m_isPlayer2)
+            else if (!m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush && m_queuedButtons.back().m_isPlayer2)
             {
                 GJBaseGameLayer::handleButton(false, static_cast<int>(PlayerButton::Jump), false);
                 ignoreInputs = false;
@@ -93,11 +93,11 @@ class $modify(ReplayPlayLayer, PlayLayer)
             // if last input is a release and queuedButtons' last element is also a release, clear queuedButtons so it doesn't add an unnecessary release
             if (!cbf)
             {
-                if (!macro.empty() && !macro.back().isHolding && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
+                if (!m_queuedButtons.empty() && !macro.empty() && !macro.back().isHolding && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
             }
             else
             {
-                if (!cbfMacro.empty() && !cbfMacro.back().isHolding && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
+                if (!m_queuedButtons.empty() && !cbfMacro.empty() && !cbfMacro.back().isHolding && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
             }
 
             // if release input was made after frame that you reset to and queueButtons' last input is a release, let queueButtons do the release
@@ -109,11 +109,11 @@ class $modify(ReplayPlayLayer, PlayLayer)
             // (Technically UFO release matters too because if you do a swift while UFO nothing happens)
             if (!cbf)
             {
-                if (!macro.empty() && macro.back().isHolding && m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
+                if (!m_queuedButtons.empty() && !macro.empty() && macro.back().isHolding && m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
             }
             else
             {
-                if (!cbfMacro.empty() && cbfMacro.back().isHolding && m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
+                if (!m_queuedButtons.empty() && !cbfMacro.empty() && cbfMacro.back().isHolding && m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
             }
 
             // if you reset to a frame that was before any inputs were made and queuedButtons has a release input, ignore it
