@@ -183,7 +183,10 @@ void setupGUI()
                 HelpMarker("Enables Xenon's own implementation of CBF.\nDisable the CBF mod by Syzzi and RobTop's CBS.\nChange CBF frame clicked on in Macro Editor.");
 
                 ImGui::Checkbox("Frame stepper", &frameStepper); ImGui::SameLine();
-                HelpMarker("Enables frame stepper.\nKeybinds:\nC -> Advance\nV -> Toggle\nB -> Step back");
+                HelpMarker("Enables frame stepper.\nKeybinds:\nC -> Advance\nV -> Toggle");
+
+                ImGui::Checkbox("Block Inputs", &blockInputs); ImGui::SameLine();
+                HelpMarker("Blocks inputs while replaying a macro.");
 
                 if (ImGui::BeginPopupModal("CBF", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
                 {

@@ -31,7 +31,9 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
                 {
                     auto step = static_cast<unsigned long long>(in.preciseFrame);
                     if (step != g_frame) { continue; }
+                    
                     double alpha = in.preciseFrame - step;
+
                     if (alpha < 1e-4) { GJBaseGameLayer::handleButton(in.isHolding, static_cast<int>(PlayerButton::Jump), in.isPlayer1); }
                     else { stepInputs.push_back({alpha, in.isHolding, in.isPlayer1}); }
                 }
@@ -45,6 +47,15 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
             }
         }
         GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
+    }
+
+    void processQueuedButtons(float dt, bool clearInputQueue) 
+    {
+        if (replayStatus == 2) { return GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue); }
+
+        if (blockInputs && replayStatus == 1) { m_queuedButtons.clear(); }
+
+        GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue);
     }
 
 };
