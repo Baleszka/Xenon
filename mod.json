@@ -1,0 +1,27 @@
+{
+	"geode": "5.10.1",
+	"gd": {
+		"win": "2.2081",
+		"android": "2.2081",
+		"mac": "2.2081",
+		"ios": "2.2081"
+	},
+	"id": "baleszka.xenon",
+	"name": "Xenon",
+	"version": "v1.0.0-alpha",
+	"developer": "Baleszka",
+	"description": "Advanced & lightweight bot for GD",
+	"dependencies": {
+		"geode.node-ids": ">=v1.23.3"
+	},
+	"links": {
+		"community": "https://discord.gg/rDhuzHp3Xe",
+		"homepage": "https://xenon.baleszka.dev",
+		"source": "https://github.com/Baleszka/Xenon"
+	},
+	"resources": {
+    "files": [
+        "resources/*.ttf"
+    ]
+}
+}
