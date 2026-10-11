@@ -1,25 +1,30 @@
 #include "cbf.hpp"
+
 #include <Geode/Geode.hpp>
 #include <Geode/modify/PlayerObject.hpp>
 
 using namespace geode::prelude;
 
-static bool midStep = false, p1Split = false, p2Split = false;
-static float rotationDelta = 0.f;
-static CCPoint p1Pos, p2Pos;
+bool midStep = false;
+bool p1Split = false;
+bool p2Split = false;
+
+float rotationDelta = 0.f;
+
+CCPoint p1Pos;
+CCPoint p2Pos;
 
 // only split if the click wouldn't just get buffered
-static bool canAct(PlayerObject* p) 
+bool canAct(PlayerObject* p) 
 {
     return p->m_isOnGround || p->m_touchingRings->count() || p->m_isDashing || p->m_isDart || p->m_isBird || p->m_isShip || p->m_isSwing;
 }
 
-static void advance(PlayLayer* pl, PlayerObject* p, float d, float stepDelta) 
+void advance(PlayLayer* pl, PlayerObject* p, float d, float stepDelta) 
 {
     p->update(d);
     pl->checkCollisions(p, (p->m_isOnSlope && !p->m_isDart) ? stepDelta : 0.0f, true);
     p->updateRotation(d);
-    // reset collision log
     p->m_collisionLogTop->removeAllObjects();
     p->m_collisionLogBottom->removeAllObjects();
     p->m_collisionLogLeft->removeAllObjects();
@@ -38,7 +43,7 @@ class $modify(PlayerObject)
         if (this != pl->m_player1) 
         {
             // P2 gets updated inside P1's call when this step is split
-            if (!(this == pl->m_player2 && !stepInputs.empty())) PlayerObject::update(dt);
+            if (!(this == pl->m_player2 && !stepInputs.empty())) { PlayerObject::update(dt); }
             return;
         }
 
@@ -50,18 +55,23 @@ class $modify(PlayerObject)
         }
 
         PlayerObject* p2 = pl->m_player2;
+
         p1Split = canAct(this);
         p2Split = pl->m_gameState.m_isDualMode && canAct(p2);
+
         p1Pos = getPosition();
         p2Pos = p2->getPosition();
 
         midStep = true;
         double prev = 0.0;
+
         for (auto& s : stepInputs)
         { 
             float d = dt * float(s.alpha - prev);
-            if (p1Split) advance(pl, this, d, dt);
-            if (p2Split) advance(pl, p2, d, dt);
+
+            if (p1Split) { advance(pl, this, d, dt); }
+            if (p2Split) { advance(pl, p2, d, dt); }
+
             pl->handleButton(s.isHolding, (int)PlayerButton::Jump, s.isPlayer1);
             prev = s.alpha;
         }
@@ -86,7 +96,7 @@ class $modify(PlayerObject)
             PlayerObject::updateRotation(rotationDelta);
             m_lastPosition = p2Pos;
         }
-        else PlayerObject::updateRotation(t);
+        else { PlayerObject::updateRotation(t); }
     }
 };
 
