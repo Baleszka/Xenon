@@ -6,7 +6,6 @@ using namespace geode::prelude;
 
 inline double m_tpsOverflow = 0.0;
 
-inline int m_respawnTimer = 0;
 inline int totalStepCount = 0;
 inline int estimatedStepCount = 1;
 

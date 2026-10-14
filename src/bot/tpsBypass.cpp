@@ -23,10 +23,8 @@ void calculateSteps(float dt, float targetDt)
     if (wantedDt == 0.0f) { return; }
 
     int steps = std::floor(dt / wantedDt);
-
-    // i genuinely have no clue what these even do but they break literally everything when i remove them
-    if (m_respawnTimer > 0) { m_tpsOverflow = 0.0; }
-    else{ m_tpsOverflow = dt - steps * wantedDt; }
+    
+    m_tpsOverflow = dt - steps * wantedDt;
 
     if (isPaused())
     {
