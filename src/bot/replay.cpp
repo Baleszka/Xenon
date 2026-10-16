@@ -1,5 +1,5 @@
 #include "replay.hpp"
-#include "frameHook.hpp"
+#include "../info/gameInfo.hpp"
 #include "../ui/gui.hpp"
 #include "tpsBypass.hpp"
 #include "cbf.hpp"
@@ -13,12 +13,21 @@ bool ignoreInputs = false;
 
 class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
 {
-    void handleButton(bool down, int button, bool isPlayer1)
+    void processQueuedButtons(float dt, bool clearInputQueue) 
     {
-        GJBaseGameLayer::handleButton(down, button, isPlayer1);
-        if (replayStatus == 0 && button == static_cast<int>(PlayerButton::Jump) && !ignoreInputs) { addInput(g_frame, down, isPlayer1); } // record
-    }
+        if (replayStatus == 2) { return GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue); }
 
+        if (blockInputs && replayStatus == 1) { m_queuedButtons.clear(); } // Block inputs during replay
+
+        if (replayStatus == 0 && !ignoreInputs && !m_queuedButtons.empty())
+        {
+            addInput(getFrame() - 1, m_queuedButtons.back().m_isPush, !m_queuedButtons.back().m_isPlayer2); // record
+        }
+
+        GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue);
+        
+    }
+    
     void processCommands(float dt, bool isHalfTick, bool isLastTick)
     {
         stepInputs.clear();
@@ -30,7 +39,7 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
                 for (auto &in : cbfMacro)
                 {
                     auto step = static_cast<unsigned long long>(in.preciseFrame);
-                    if (step != g_frame) { continue; }
+                    if (step != getFrame()) { continue; }
                     
                     double alpha = in.preciseFrame - step;
 
@@ -42,20 +51,11 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
             {
                 for (auto &in : macro)
                 {
-                    if (in.frame == g_frame) { GJBaseGameLayer::handleButton(in.isHolding, static_cast<int>(PlayerButton::Jump), in.isPlayer1); }
+                    if (in.frame == getFrame()) { GJBaseGameLayer::handleButton(in.isHolding, static_cast<int>(PlayerButton::Jump), in.isPlayer1); }
                 }
             }
         }
         GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
-    }
-
-    void processQueuedButtons(float dt, bool clearInputQueue) 
-    {
-        if (replayStatus == 2) { return GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue); }
-
-        if (blockInputs && replayStatus == 1) { m_queuedButtons.clear(); }
-
-        GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue);
     }
 
 };
@@ -92,14 +92,14 @@ class $modify(ReplayPlayLayer, PlayLayer)
             // remove inputs if the frame they were made on is bigger than the frame reset to
             if (!cbf)
             {
-                while (!macro.empty() && macro.back().frame >= g_frame)
+                while (!macro.empty() && macro.back().frame >= getFrame())
                 {
                     macro.pop_back();
                 }
             }
             else
             {
-                while (!cbfMacro.empty() && cbfMacro.back().preciseFrame >= g_frame) { cbfMacro.pop_back(); }
+                while (!cbfMacro.empty() && cbfMacro.back().preciseFrame >= getFrame()) { cbfMacro.pop_back(); }
             }
 
             // if last input is a release and queuedButtons' last element is also a release, clear queuedButtons so it doesn't add an unnecessary release
