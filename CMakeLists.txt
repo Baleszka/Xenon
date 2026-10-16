@@ -17,17 +17,14 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 add_library(${PROJECT_NAME} SHARED ${SOURCES}
     src/ui/gui.cpp
     src/ui/gui.hpp
-    src/info/playerInfo.cpp
-    src/info/playerInfo.hpp
-    src/bot/frameHook.hpp
+    src/info/gameInfo.cpp
+    src/info/gameInfo.hpp
     src/bot/xe.cpp
     src/bot/xe.hpp
     src/bot/replay.cpp
     src/bot/replay.hpp
     src/calculator/calculator.cpp
     src/calculator/calculator.hpp
-    src/checkpoint/checkpoint.cpp
-    src/checkpoint/checkpoint.hpp
     src/bot/cbf.cpp
     src/bot/cbf.hpp
     src/assist/hitboxes.cpp
@@ -37,11 +34,11 @@ add_library(${PROJECT_NAME} SHARED ${SOURCES}
     src/bot/speedhack.cpp
     src/bot/speedhack.hpp
     src/patches/releaseFix.cpp
+    src/patches/releaseFix.hpp
     src/bot/tpsBypass.cpp
     src/bot/tpsBypass.hpp
     src/bot/midhook.hpp
     src/bot/midhook.cpp
-    src/patches/releaseFix.hpp
     src/assist/autoclicker.cpp
     src/assist/autoclicker.hpp)
 

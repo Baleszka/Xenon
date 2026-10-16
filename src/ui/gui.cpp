@@ -1,6 +1,5 @@
 #include "gui.hpp"
-#include "../info/playerInfo.hpp"
-#include "../bot/frameHook.hpp"
+#include "../info/gameInfo.hpp"
 #include "../calculator/calculator.hpp"
 #include "../bot/replay.hpp"
 #include "../bot/cbf.hpp"

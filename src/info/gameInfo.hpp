@@ -24,3 +24,4 @@ fVector4 getPlayerPos();
 dVector2 getPlayerVel();
 fVector2 getPlayerRot();
 int getRandomSeed();
+int getFrame();

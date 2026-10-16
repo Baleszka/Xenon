@@ -1,4 +1,4 @@
-#include "playerInfo.hpp"
+#include "gameInfo.hpp"
 
 using namespace geode::prelude;
 
@@ -54,4 +54,10 @@ int getRandomSeed()
 {
     auto gjbgl = GJBaseGameLayer::get();
     return gjbgl->m_randomSeed;
+}
+
+int getFrame()
+{
+    auto gjbgl = GJBaseGameLayer::get();
+    return gjbgl->m_gameState.m_currentProgress / 2;
 }
