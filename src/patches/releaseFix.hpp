@@ -86,3 +86,10 @@ $execute
 // Address = Base + Offset
 // 
 // Base = 140000000 because GD is 64bit
+//
+// New offsets for 2.209:
+// GJBaseGameLayer::resetLevelVariables 0x342A3C BYTES->24 NOP
+// PlayLayer::resumeAndRestart 0x516C41 BYTES->12 NOP
+// PlayLayer::resume 0x516C41 BYTES->12 NOP
+// PlayLayer::pauseGame 0x5168B1 BYTES->12 NOP
+// PlayLayer::pauseGame#2 0x516907 BYTES->12 NOP

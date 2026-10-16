@@ -6,8 +6,9 @@ bool patchesEnabled = false;
 
 void applyPatches()
 {
-    for (auto* p : Mod::get()->getPatches()) {
-        if (!p->isEnabled()) (void)p->enable();
+    for (auto* p : Mod::get()->getPatches()) 
+    {
+        if (!p->isEnabled()) { (void)p->enable(); }
     }
     geode::log::info("Enabled patches");
     patchesEnabled = true;
@@ -15,8 +16,9 @@ void applyPatches()
 
 void disablePatches()
 {
-    for (auto* p : Mod::get()->getPatches()) {
-        if (p->isEnabled()) (void)p->disable();
+    for (auto* p : Mod::get()->getPatches()) 
+    {
+        if (p->isEnabled()) { (void)p->disable(); }
     }
     geode::log::info("Disabled patches");
     patchesEnabled = false;
