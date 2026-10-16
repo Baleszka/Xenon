@@ -99,5 +99,12 @@ $execute
     util::midhook(geode::base::get() + 0x238F6E, "restorePhysDt", restorePhysDtHook);
 }
 
-// Borrowed from silicate :3
-// thanks nat for gplv3 <3
+//
+// New offsets for 2.209:
+//
+// physDt 0x33DE71
+// physStepCount 0x33E095
+// restorePhysDt 0x33F157
+//
+// Method from silicate v1.1 source
+// Credits to nat
