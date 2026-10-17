@@ -100,11 +100,15 @@ $execute
 }
 
 //
-// New offsets for 2.209:
-//
+// Offsets for 2.209:
 // physDt 0x33DE71
 // physStepCount 0x33E095
 // restorePhysDt 0x33F157
+//
+// Offsets for 2.2091:
+// physDt 0x340900
+// physStepCount 0x340B18
+// restorePhysDt 0x341BC7
 //
 // Method from silicate v1.1 source
 // Credits to nat
