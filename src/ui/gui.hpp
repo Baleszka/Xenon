@@ -1,18 +1,9 @@
 #pragma once
-#include <imgui-cocos.hpp>
 
-void setupGUI();
-
-inline void HelpMarker(const char* desc)
+namespace gui
 {
-    ImGui::TextDisabled("(?)");
-    if (ImGui::BeginItemTooltip())
-    {
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(desc);
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
-    }
-}
+	void setupGui();
+	void toggleGui();
 
-#define IM_COUNTOF(_ARR) ((int)(sizeof(_ARR) / sizeof(*(_ARR))))
+	void setupDefaultStyle();
+}
