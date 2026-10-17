@@ -1,8 +1,9 @@
 #include "ui/gui.hpp"
+#include "ui/layout.hpp"
 
 $execute 
 {
-    setupGUI();
+    gui::setupGui();
 };
 
 /*
