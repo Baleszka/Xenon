@@ -25,7 +25,7 @@ void simulate(PlayLayer* pl, CCDrawNode* node, PlayerObject* fake, PlayerObject*
         fake->m_jumpBuffered = false; // or it still jumps if you clicked a frame before
     }
 
-    float dt = getPhysicsDt() * 60.f * pl->m_gameState.m_timeWarp; // 0.25 on 240tps, timewarp for slowmo triggers
+    float dt = getPhysicsDt() * 60.f * pl->m_gameState.m_timeWarp;
     float w = trajectoryTrailWidth / pl->m_gameState.m_cameraZoom;
 
     ccColor4F c = {col[0], col[1], col[2], 1.0f};
@@ -49,7 +49,7 @@ void simulate(PlayLayer* pl, CCDrawNode* node, PlayerObject* fake, PlayerObject*
         if (fakeDied) { drawPlayerHitbox(node, pl, fake); break; } // show where you would die
 
         node->drawSegment(last, fake->getPosition(), w, c);
-        if (fake->getPositionX() > pl->m_levelLength) break; // dont go past the end
+        if (fake->getPositionX() > pl->m_levelLength) break; 
     }
     fake->setVisible(false);
 }
@@ -118,7 +118,7 @@ class $modify(TrajectoryBGL, GJBaseGameLayer)
     {
         if (!simulating) return GJBaseGameLayer::canBeActivatedByPlayer(p, obj);
 
-        // fake player cant actually activate stuff so do the portals by hand
+        // fake player cant activate stuff so do the portals by hand
         // TODO pads orbs and gamemode portals
         switch (obj->m_objectID) {
             case 10: if (p->m_isUpsideDown) p->flipGravity(false, true); break;
