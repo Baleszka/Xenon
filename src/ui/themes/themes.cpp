@@ -103,18 +103,21 @@ namespace themes
 		ImGui::StyleColorsDark();
 
 		auto& s = ImGui::GetStyle();
-		s.FrameRounding    = 0;
-		s.WindowRounding   = 0;
-		s.ChildRounding    = 0;
-		s.PopupRounding    = 0;
-		s.GrabRounding     = 0;
-		s.TabRounding      = 0;
+		s.FrameRounding = 4;
+		s.WindowRounding = 6;
+		s.ChildRounding = 0;
+		s.PopupRounding = 6;
+		s.GrabRounding = 0;
+		s.TabRounding = 0;
 		s.ScrollbarRounding = 0;
 		s.WindowBorderSize = 1;
-		s.ChildBorderSize  = 1;
-		s.PopupBorderSize  = 1;
-		s.FramePadding     = { 7.25f, 3 };
+		s.ChildBorderSize = 1;
+		s.PopupBorderSize = 1;
+		s.FramePadding = { 7.25f, 3 };
 		s.SeparatorTextAlign = { 0.5f, 0.5f };
-		s.WindowTitleAlign   = { 0.5f, 0.5f };
+		s.WindowTitleAlign = { 0.5f, 0.5f };
+		s.WindowPadding = { 8, 8};
+		s.ItemSpacing = { 8, 4 };
+		s.ItemInnerSpacing = { 4, 4 };
 	}
 }
