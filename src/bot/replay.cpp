@@ -21,7 +21,11 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
 
         if (replayStatus == 0 && !ignoreInputs && !m_queuedButtons.empty())
         {
-            addInput(getFrame() - 1, m_queuedButtons.back().m_isPush, !m_queuedButtons.back().m_isPlayer2); // record
+            for (auto &in : m_queuedButtons)
+            {
+                addInput(getFrame() - 1, in.m_isPush, !in.m_isPlayer2); // record
+            }
+            
         }
 
         GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue);
