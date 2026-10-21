@@ -150,13 +150,11 @@ void addInput(unsigned long long frame, bool isHolding, bool isPlayer1)
 {
     if (!cbf) { macro.push_back({frame, isHolding, isPlayer1}); }
     else { cbfMacro.push_back({float(frame), isHolding, isPlayer1}); }
-    // log::info("Added input on frame {} isHolding {} isPlayer1 {}", frame, isHolding, isPlayer1);
 }
 
 void simulateInput(bool isHolding, bool isPlayer1)
 {
     auto playLayer = PlayLayer::get();
-    if (!playLayer)
-        return;
-    playLayer->handleButton(isHolding, static_cast<int>(PlayerButton::Jump), isPlayer1); // simulates input :O
+    if (!playLayer) { return; }
+    playLayer->queueButton(static_cast<int>(PlayerButton::Jump), isHolding, !isPlayer1, playLayer->m_timestamp);
 }
