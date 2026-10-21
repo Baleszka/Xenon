@@ -39,32 +39,28 @@ class $modify(MenuLayer)
 
         MenuLayer::onQuit(sender);
     }
-
-    bool init()
-    {
-        if (!MenuLayer::init()) return false;
-
-        auto hitboxLoad = Mod::get()->getSavedValue<hitboxSaveData>("hitboxData");
-
-        hitboxWidth = hitboxLoad.hitboxWidth;
-        trailLength = hitboxLoad.trailLength;
-
-        std::copy(hitboxLoad.hazardCol.begin(), hitboxLoad.hazardCol.end(), hazardCol);
-        std::copy(hitboxLoad.solidCol.begin(), hitboxLoad.solidCol.end(), solidCol);
-        std::copy(hitboxLoad.interactableCol.begin(), hitboxLoad.interactableCol.end(), interactableCol);
-        std::copy(hitboxLoad.hazardRotCol.begin(), hitboxLoad.hazardRotCol.end(), hazardRotCol);
-        std::copy(hitboxLoad.passableCol.begin(), hitboxLoad.passableCol.end(), passableCol);
-
-        showPlayer = hitboxLoad.showPlayer;
-        showPlayerRot = hitboxLoad.showPlayerRot;
-        showPlayerInner = hitboxLoad.showPlayerInner;
-        showPlayerCircle = hitboxLoad.showPlayerCircle;
-
-        auto replayLoad = Mod::get()->getSavedValue<replaySaveData>("replayData");
-
-        speedhackAudio = replayLoad.speedhackAudio;
-        blockInputs = replayLoad.blockInputs;
-
-        return true;
-    }
 };
+
+$execute
+{
+    auto hitboxLoad = Mod::get()->getSavedValue<hitboxSaveData>("hitboxData");
+
+    hitboxWidth = hitboxLoad.hitboxWidth;
+    trailLength = hitboxLoad.trailLength;
+
+    std::copy(hitboxLoad.hazardCol.begin(), hitboxLoad.hazardCol.end(), hazardCol);
+    std::copy(hitboxLoad.solidCol.begin(), hitboxLoad.solidCol.end(), solidCol);
+    std::copy(hitboxLoad.interactableCol.begin(), hitboxLoad.interactableCol.end(), interactableCol);
+    std::copy(hitboxLoad.hazardRotCol.begin(), hitboxLoad.hazardRotCol.end(), hazardRotCol);
+    std::copy(hitboxLoad.passableCol.begin(), hitboxLoad.passableCol.end(), passableCol);
+
+    showPlayer = hitboxLoad.showPlayer;
+    showPlayerRot = hitboxLoad.showPlayerRot;
+    showPlayerInner = hitboxLoad.showPlayerInner;
+    showPlayerCircle = hitboxLoad.showPlayerCircle;
+
+    auto replayLoad = Mod::get()->getSavedValue<replaySaveData>("replayData");
+
+    speedhackAudio = replayLoad.speedhackAudio;
+    blockInputs = replayLoad.blockInputs;
+}
