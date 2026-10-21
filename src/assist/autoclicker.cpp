@@ -2,31 +2,30 @@
 #include "../bot/replay.hpp"
 
 #include <Geode/modify/GJBaseGameLayer.hpp>
-#include <Geode/modify/PlayLayer.hpp>
 
 using namespace geode::prelude;
 
 class $modify(AutoClickerGJBaseGameLayer, GJBaseGameLayer)
 {
     void processCommands(float dt, bool isHalfTick, bool isLastTick) {
-        GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
+        
         if (player1 && replayStatus != 2)
         {
             if (counterP1 == 0)
             {
-                GJBaseGameLayer::handleButton(true, static_cast<int>(PlayerButton::Jump), true);
+                queueButton(static_cast<int>(PlayerButton::Jump), true, false, m_timestamp);
                 if (p1Swift)
                 {
-                    GJBaseGameLayer::handleButton(false, static_cast<int>(PlayerButton::Jump), true);
+                    queueButton(static_cast<int>(PlayerButton::Jump), false, false, m_timestamp);
                 }
             }
             if (counterP1 == p1HoldFor)
             {
                 if (p1Swift)
                 {
-                    GJBaseGameLayer::handleButton(true, static_cast<int>(PlayerButton::Jump), true);
+                    queueButton(static_cast<int>(PlayerButton::Jump), true, false, m_timestamp);
                 }
-                GJBaseGameLayer::handleButton(false, static_cast<int>(PlayerButton::Jump), true);
+                queueButton(static_cast<int>(PlayerButton::Jump), false, false, m_timestamp);
                 counterP1 = -p1ReleaseFor;
             }
             counterP1++;
@@ -35,22 +34,24 @@ class $modify(AutoClickerGJBaseGameLayer, GJBaseGameLayer)
         {
             if (counterP2 == 0)
             {
-                GJBaseGameLayer::handleButton(true, static_cast<int>(PlayerButton::Jump), false);
+                queueButton(static_cast<int>(PlayerButton::Jump), true, true, m_timestamp);
                 if (p2Swift)
                 {
-                    GJBaseGameLayer::handleButton(false, static_cast<int>(PlayerButton::Jump), false);
+                    queueButton(static_cast<int>(PlayerButton::Jump), false, true, m_timestamp);
                 }
             }
             if (counterP2 == p2HoldFor)
             {
                 if (p2Swift)
                 {
-                    GJBaseGameLayer::handleButton(true, static_cast<int>(PlayerButton::Jump), false);
+                    queueButton(static_cast<int>(PlayerButton::Jump), true, true, m_timestamp);
                 }
-                GJBaseGameLayer::handleButton(false, static_cast<int>(PlayerButton::Jump), false);
+                queueButton(static_cast<int>(PlayerButton::Jump), false, true, m_timestamp);
                 counterP2 = -p2ReleaseFor;
             }
             counterP2++;
         }
+        // call processCommands after so it doesn't wait an extra frame
+        GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
     }
 };
