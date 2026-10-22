@@ -25,11 +25,9 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
             {
                 addInput(getFrame() - 1, in.m_isPush, !in.m_isPlayer2); // record
             }
-            
         }
-
-        GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue);
         
+        GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue);
     }
     
     void processCommands(float dt, bool isHalfTick, bool isLastTick)
@@ -93,53 +91,29 @@ class $modify(ReplayPlayLayer, PlayLayer)
 
         if (replayStatus == 0)
         {
-            // remove inputs if the frame they were made on is bigger than the frame reset to
             if (!cbf)
             {
-                while (!macro.empty() && macro.back().frame >= getFrame())
-                {
-                    macro.pop_back();
-                }
+                // remove inputs if the frame they were made on is bigger than the frame reset to
+                while (!macro.empty() && macro.back().frame >= getFrame()) { macro.pop_back(); }
+                
+                // if last input is a release and queuedButtons' last element is also a release, clear queuedButtons so it doesn't add an unnecessary release
+                if (!m_queuedButtons.empty() && !macro.empty() && !macro.back().isHolding && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
+
+                // if youre a game mode whos release matters, if youre holding while you reset, it doesnt start holding again, rather it ignores it and only adds the release when you release
+                // for gamemodes like wave, ship and robot
+                // (Technically UFO release matters too because if you do a swift while UFO nothing happens)
+                if (!m_queuedButtons.empty() && !macro.empty() && macro.back().isHolding && m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
+
+                // if you reset to a frame that was before any inputs were made and queuedButtons has a release input, ignore it
+                // fixes ghost release
+                if (macro.empty() && !m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush)  { m_queuedButtons.clear(); }       
+            
             }
             else
             {
                 while (!cbfMacro.empty() && cbfMacro.back().preciseFrame >= getFrame()) { cbfMacro.pop_back(); }
-            }
-
-            // if last input is a release and queuedButtons' last element is also a release, clear queuedButtons so it doesn't add an unnecessary release
-            if (!cbf)
-            {
-                if (!m_queuedButtons.empty() && !macro.empty() && !macro.back().isHolding && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
-            }
-            else
-            {
                 if (!m_queuedButtons.empty() && !cbfMacro.empty() && !cbfMacro.back().isHolding && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
-            }
-
-            // if release input was made after frame that you reset to and queueButtons' last input is a release, let queueButtons do the release
-            // added for debugging purposes
-            // else if (!macro.empty() && macro.back().isHolding && !m_queuedButtons.back().m_isPush) { log::info("Adding release from queuedButtons"); }
-
-            // if youre a game mode whos release matters, if youre holding while you reset, it doesnt start holding again, rather it ignores it and only adds the release when you release
-            // for gamemodes like wave, ship and robot
-            // (Technically UFO release matters too because if you do a swift while UFO nothing happens)
-            if (!cbf)
-            {
-                if (!m_queuedButtons.empty() && !macro.empty() && macro.back().isHolding && m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
-            }
-            else
-            {
                 if (!m_queuedButtons.empty() && !cbfMacro.empty() && cbfMacro.back().isHolding && m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
-            }
-
-            // if you reset to a frame that was before any inputs were made and queuedButtons has a release input, ignore it
-            // fixes ghost release
-            if (!cbf)
-            {
-                if (macro.empty() && !m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush)  { m_queuedButtons.clear(); }
-            }
-            else
-            {
                 if (cbfMacro.empty() && !m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
             }
         }
