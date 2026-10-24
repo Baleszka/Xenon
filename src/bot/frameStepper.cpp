@@ -6,15 +6,24 @@
 
 using namespace geode::prelude;
 
-class $modify(FSKeybind, CCKeyboardDispatcher)
-{
-    bool dispatchKeyboardMSG(enumKeyCodes key, bool isKeyDown, bool isKeyRepeat, double ts)
-    {
-        if (key == enumKeyCodes::KEY_V && isKeyDown && replayStatus != 2) { frameStepper = !frameStepper; }
-        if (key == enumKeyCodes::KEY_C && isKeyDown && frameStepper) { shouldStep = true; }
-        return CCKeyboardDispatcher::dispatchKeyboardMSG(key, isKeyDown, isKeyRepeat, ts);
-    }
-};
+$on_game(Loaded) {
+    listenForKeybindSettingPresses("framestepper-toggle", [](Keybind const& keybind, bool down, bool repeat, double timestamp) {
+        if (down && !repeat && replayStatus != 2)
+        {
+            frameStepper = !frameStepper;
+        }
+    });
+    listenForKeybindSettingPresses("framestepper-step", [](Keybind const& keybind, bool down, bool repeat, double timestamp) {
+        if (down && !repeat && frameStepper)
+        {
+            shouldStep = true;
+        }
+        else if (down && repeat && frameStepper)
+        {
+            shouldStep = true;
+        }
+    });
+}
 
 class $modify(FSGJBaseGameLayer, GJBaseGameLayer)
 {

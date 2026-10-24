@@ -63,14 +63,11 @@ namespace gui
 	}
 }
 
-class $modify(ImGuiKeybindHook, cocos2d::CCKeyboardDispatcher)
-{
-	bool dispatchKeyboardMSG(cocos2d::enumKeyCodes key, bool isKeyDown, bool isKeyRepeat, double ts)
-	{
-		if (key == cocos2d::enumKeyCodes::KEY_F && isKeyDown)
-		{
-			gui::toggleGui();
-		}
-		return CCKeyboardDispatcher::dispatchKeyboardMSG(key, isKeyDown, isKeyRepeat, ts);
-	}
-};
+$on_game(Loaded) {
+    listenForKeybindSettingPresses("open-menu", [](Keybind const& keybind, bool down, bool repeat, double timestamp) {
+        if (down && !repeat)
+        {
+            gui::toggleGui();
+        }
+    });
+}
