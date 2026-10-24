@@ -11,6 +11,23 @@
 	"dependencies": {
 		"geode.node-ids": ">=v1.23.3"
 	},
+	"settings" : {
+		"open-menu": {
+			"type": "keybind",
+			"name": "Open Xenon Bot Menu",
+			"default": "F"
+		},
+		"framestepper-toggle": {
+			"type": "keybind",
+			"name": "Framestepper: Toggle",
+			"default": "V"
+		},
+		"framestepper-step": {
+			"type": "keybind",
+			"name": "Framestepper: Forward step",
+			"default": "C"
+		}
+	},
 	"links": {
 		"community": "https://discord.gg/rDhuzHp3Xe",
 		"homepage": "https://xenon.baleszka.dev",
