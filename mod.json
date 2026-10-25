@@ -5,7 +5,7 @@
 	},
 	"id": "baleszka.xenon",
 	"name": "Xenon",
-	"version": "v1.0.0-alpha",
+	"version": "v1.0.0-alpha.2",
 	"developer": "Baleszka",
 	"description": "Advanced & lightweight bot for GD",
 	"dependencies": {
