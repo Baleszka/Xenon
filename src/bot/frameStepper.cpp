@@ -7,21 +7,15 @@
 using namespace geode::prelude;
 
 $on_game(Loaded) {
-    listenForKeybindSettingPresses("framestepper-toggle", [](Keybind const& keybind, bool down, bool repeat, double timestamp) {
-        if (down && !repeat && replayStatus != 2)
-        {
-            frameStepper = !frameStepper;
-        }
+    listenForKeybindSettingPresses("framestepper-toggle", [](Keybind const& keybind, bool down, bool repeat, double timestamp) 
+    {
+        if (down && !repeat && replayStatus != 2) { frameStepper = !frameStepper; }
     });
-    listenForKeybindSettingPresses("framestepper-step", [](Keybind const& keybind, bool down, bool repeat, double timestamp) {
-        if (down && !repeat && frameStepper)
-        {
-            shouldStep = true;
-        }
-        else if (down && repeat && frameStepper)
-        {
-            shouldStep = true;
-        }
+
+    listenForKeybindSettingPresses("framestepper-step", [](Keybind const& keybind, bool down, bool repeat, double timestamp) 
+    {
+        if (down && !repeat && frameStepper) { shouldStep = true; }
+        else if (down && repeat && frameStepper) { shouldStep = true; }
     });
 }
 
