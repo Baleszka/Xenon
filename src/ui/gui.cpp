@@ -28,19 +28,10 @@ namespace gui
 			ImFontConfig cfg;
 			cfg.GlyphExtraAdvanceX = 2.0f;
 			ImFont* font = io.Fonts->AddFontFromFileTTF(fontPath.string().c_str(), 18.0f, &cfg);
-			if (font)
-			{
-				io.FontDefault = font;
-			}
-			else
-			{
-				io.Fonts->AddFontDefault();
-			}
+			if (font) { io.FontDefault = font; }
+			else { io.Fonts->AddFontDefault(); }
 		}
-		else
-		{
-			io.Fonts->AddFontDefault();
-		}
+		else { io.Fonts->AddFontDefault(); }
 	}
 
 	void setupGui()
@@ -57,17 +48,12 @@ namespace gui
 		ImGuiCocos::get().toggle(); // hide menu on startup
 	}
 
-	void toggleGui()
-	{
-		ImGuiCocos::get().toggle();
-	}
+	void toggleGui() { ImGuiCocos::get().toggle(); }
 }
 
 $on_game(Loaded) {
-    listenForKeybindSettingPresses("open-menu", [](Keybind const& keybind, bool down, bool repeat, double timestamp) {
-        if (down && !repeat)
-        {
-            gui::toggleGui();
-        }
+    listenForKeybindSettingPresses("open-menu", [](Keybind const& keybind, bool down, bool repeat, double timestamp) 
+	{
+        if (down && !repeat) { gui::toggleGui(); }
     });
 }
