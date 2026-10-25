@@ -1,9 +1,10 @@
 #pragma once
 
+#include "../info/labels.hpp"
+
 #include <Geode/Geode.hpp>
 #include <matjson.hpp>
 #include <array>
-#include "../assist/hitboxes.hpp"
 
 struct hitboxSaveData
 {
@@ -25,7 +26,7 @@ struct hitboxSaveData
 template <>
 struct matjson::Serialize<hitboxSaveData>
 {
-    static Result<hitboxSaveData> fromJson(Value const& value)
+    static arc::Result<hitboxSaveData> fromJson(Value const& value)
     {
         GEODE_UNWRAP_INTO(float hitboxWidth, value["hitboxWidth"].as<float>());
         GEODE_UNWRAP_INTO(int trailLength, value["trailLength"].as<int>());
@@ -75,7 +76,7 @@ struct replaySaveData
 template <>
 struct matjson::Serialize<replaySaveData>
 {
-    static Result<replaySaveData> fromJson(Value const& value)
+    static arc::Result<replaySaveData> fromJson(Value const& value)
     {
         GEODE_UNWRAP_INTO(bool speedhackAudio, value["speedhackAudio"].as<bool>());
         GEODE_UNWRAP_INTO(bool blockInputs, value["blockInputs"].as<bool>());
@@ -92,6 +93,81 @@ struct matjson::Serialize<replaySaveData>
         ({
             { "speedhackAudio", d.speedhackAudio },
             { "blockInputs", d.blockInputs }
+        });
+    }
+};
+
+struct settingsSaveData
+{
+    bool labelsEnabled = false;
+
+    label positionLabels = { "", 0, 1.0f, 10, false };
+    label velocityLabel = { "Velocity", 0, 1.0f, 10, false };
+    label rotationLabel = { "Rotation", 0, 1.0f, 10, false };
+    label tickLabel = { "Tick", 0, 1.0f, 10, false };
+    label seedLabel = { "Seed", 0, 1.0f, 10, false };
+};
+
+template <>
+struct matjson::Serialize<label>
+{
+    static arc::Result<label> fromJson(Value const& value)
+    {
+        GEODE_UNWRAP_INTO(std::string text, value["text"].as<std::string>());
+        GEODE_UNWRAP_INTO(int position, value["position"].as<int>());
+        GEODE_UNWRAP_INTO(float opacity, value["opacity"].as<float>());
+        GEODE_UNWRAP_INTO(int size, value["size"].as<int>());
+        GEODE_UNWRAP_INTO(bool enabled, value["enabled"].as<bool>());
+
+        return geode::Ok(label
+        {
+            text, position, opacity, size, enabled
+        });
+    }
+
+    static Value toJson(label const& l)
+    {
+        return matjson::makeObject
+        ({
+            { "text", l.text },
+            { "position", l.position },
+            { "opacity", l.opacity },
+            { "size", l.size },
+            { "enabled", l.enabled }
+        });
+    }
+};
+
+template <>
+struct matjson::Serialize<settingsSaveData>
+{
+    static arc::Result<settingsSaveData> fromJson(Value const& value)
+    {
+        GEODE_UNWRAP_INTO(bool labelsEnabled, value["labelsEnabled"].as<bool>());
+        GEODE_UNWRAP_INTO(label positionLabel, value["positionLabels"].as<label>());
+        GEODE_UNWRAP_INTO(label velocityLabel, value["velocityLabel"].as<label>());
+        GEODE_UNWRAP_INTO(label rotationLabel, value["rotationLabel"].as<label>());
+        GEODE_UNWRAP_INTO(label tickLabel, value["tickLabel"].as<label>());
+        GEODE_UNWRAP_INTO(label seedLabel, value["seedLabel"].as<label>());
+
+        return geode::Ok(settingsSaveData
+        {
+            labelsEnabled, 
+            positionLabel, velocityLabel, rotationLabel,
+            tickLabel, seedLabel
+        });
+    }
+
+    static Value toJson(settingsSaveData const& d)
+    {
+        return matjson::makeObject
+        ({
+            { "labelsEnabled", d.labelsEnabled },
+            { "positionLabels", d.positionLabels },
+            { "velocityLabel", d.velocityLabel },
+            { "rotationLabel", d.rotationLabel },
+            { "tickLabel", d.tickLabel },
+            { "seedLabel", d.seedLabel }
         });
     }
 };

@@ -1,7 +1,9 @@
 #include "savePreferences.hpp"
+
 #include "../assist/hitboxes.hpp"
 #include "../bot/speedhack.hpp"
 #include "../bot/replay.hpp"
+#include "../info/labels.hpp"
 
 #include <Geode/modify/MenuLayer.hpp>
 #include <algorithm>
@@ -37,6 +39,17 @@ class $modify(MenuLayer)
 
         Mod::get()->setSavedValue<replaySaveData>("replayData", replaySave);
 
+        settingsSaveData settingsSave;
+
+        settingsSave.labelsEnabled = labelsEnabled;
+        settingsSave.positionLabels = positionLabels;
+        settingsSave.velocityLabel = velocityLabel;
+        settingsSave.rotationLabel = rotationLabel;
+        settingsSave.tickLabel = tickLabel;
+        settingsSave.seedLabel = seedLabel;
+
+        Mod::get()->setSavedValue<settingsSaveData>("settingsData", settingsSave);
+
         MenuLayer::onQuit(sender);
     }
 };
@@ -63,4 +76,13 @@ $execute
 
     speedhackAudio = replayLoad.speedhackAudio;
     blockInputs = replayLoad.blockInputs;
+
+    auto settingsLoad = Mod::get()->getSavedValue<settingsSaveData>("settingsData");
+
+    labelsEnabled = settingsLoad.labelsEnabled;
+    positionLabels = settingsLoad.positionLabels;
+    velocityLabel = settingsLoad.velocityLabel;
+    rotationLabel = settingsLoad.rotationLabel;
+    tickLabel = settingsLoad.tickLabel;
+    seedLabel = settingsLoad.seedLabel;
 }

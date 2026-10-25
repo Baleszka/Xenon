@@ -12,6 +12,7 @@ Xenon is a lightweight, yet advanced bot for Geometry Dash.
 
 ## Usage
 
+Default keybinds:
 - Press 'F' to open the menu
 - Press 'V' to toggle frame stepper
 - Press 'C' to advance 1 frame

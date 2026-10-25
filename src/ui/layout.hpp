@@ -3,6 +3,7 @@
 #include <imgui-cocos.hpp>
 
 #include "../info/gameInfo.hpp"
+#include "../info/labels.hpp"
 #include "../calculator/calculator.hpp"
 #include "../bot/replay.hpp"
 #include "../bot/cbf.hpp"
