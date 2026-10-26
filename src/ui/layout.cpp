@@ -71,7 +71,12 @@ namespace layout
                     if (!patchesEnabled) { applyPatches(); }
                 }
 
-                if (ImGui::RadioButton("Record", &replayStatus, 0)) { if (!patchesEnabled) { applyPatches(); } } ImGui::SameLine();
+                if (ImGui::RadioButton("Record", &replayStatus, 0)) 
+                { 
+                    if (!patchesEnabled) { applyPatches(); }
+                    // Clear inputs after current frame if set to record
+                    if (auto pl = PlayLayer::get()) { while (!macro.empty() && macro.back().frame >= getFrame()) { macro.pop_back(); } }
+                } ImGui::SameLine();
                 if (ImGui::RadioButton("Play", &replayStatus, 1)) { if (!patchesEnabled) { applyPatches(); } } ImGui::SameLine();
                 if (ImGui::RadioButton("Disable", &replayStatus, 2)) { if (patchesEnabled) { disablePatches(); } frameStepper = false; }
 
