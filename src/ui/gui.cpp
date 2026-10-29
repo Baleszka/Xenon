@@ -2,6 +2,8 @@
 #include "layout.hpp"
 #include "themes/themes.hpp"
 
+#include <asp/fs/std.hpp>
+
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 using namespace geode::prelude;
@@ -23,7 +25,7 @@ namespace gui
 		io.MouseDrawCursor = true;
 
 		auto fontPath = Mod::get()->getResourcesDir() / "DroidSans.ttf";
-		if (std::filesystem::exists(fontPath))
+		if (std::filesystem::exists(fontPath.toStdPath().unwrap()))
 		{
 			ImFontConfig cfg;
 			cfg.GlyphExtraAdvanceX = 2.0f;
@@ -51,7 +53,8 @@ namespace gui
 	void toggleGui() { ImGuiCocos::get().toggle(); }
 }
 
-$on_game(Loaded) {
+$on_game(Loaded) 
+{
     listenForKeybindSettingPresses("open-menu", [](Keybind const& keybind, bool down, bool repeat, double timestamp) 
 	{
         if (down && !repeat) { gui::toggleGui(); }

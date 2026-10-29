@@ -83,3 +83,9 @@ void loadMacro(std::filesystem::path path, char name[512])
     }
     replayStatus = 1;
 }
+
+$execute
+{
+    auto dir = getReplaysDir();
+    if (!std::filesystem::exists(dir)) { std::filesystem::create_directories(dir); }
+}

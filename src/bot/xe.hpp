@@ -3,6 +3,7 @@
 #include "replay.hpp"
 
 #include <filesystem>
+#include <asp/fs/std.hpp>
 
 #include <iostream>
 #include <string>
@@ -15,7 +16,7 @@ inline char replayName[512] = "";
 
 inline std::filesystem::path getReplaysDir()
 {
-    return Mod::get()->getPersistentDir() / "replays";
+    return (Mod::get()->getPersistentDir() / "replays").toStdPath().unwrap();
 }
 
 void saveMacro(std::filesystem::path path, char name[512], int tps, bool cbf, std::vector<input> macro);
@@ -26,10 +27,7 @@ inline std::vector<unsigned long long> parseDelimitedNumbers(std::string &input)
     std::vector<unsigned long long> numbers;
     std::istringstream ss(input);
     unsigned long long n;
-    while (ss >> n)
-    {
-        numbers.push_back(n);
-    }
+    while (ss >> n) { numbers.push_back(n); }
     return numbers;
 }
 
@@ -51,18 +49,6 @@ inline std::vector<double> parseDelimitedNumbersCBF(std::string &input)
     std::vector<double> numbers;
     std::istringstream ss(input);
     double n;
-    while (ss >> n)
-    {
-        numbers.push_back(n);
-    }
+    while (ss >> n) { numbers.push_back(n); }
     return numbers;
-}
-
-$execute
-{
-    auto dir = getReplaysDir();
-    if (!std::filesystem::exists(dir))
-    {
-        std::filesystem::create_directories(dir);
-    }
 }

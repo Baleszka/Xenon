@@ -1,7 +1,7 @@
 {
 	"geode": "5.11.2",
 	"gd": {
-		"win": "2.2081"
+		"win": "2.2091"
 	},
 	"id": "baleszka.xenon",
 	"name": "Xenon",
@@ -9,7 +9,7 @@
 	"developer": "Baleszka",
 	"description": "Advanced & lightweight bot for GD",
 	"dependencies": {
-		"geode.node-ids": ">=v1.23.3"
+		"geode.node-ids": { "version": ">=v1.23.3", "required": false }
 	},
 	"settings" : {
 		"open-menu": {

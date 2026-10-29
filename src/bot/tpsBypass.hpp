@@ -14,5 +14,6 @@ inline bool isPaused()
 	auto pl = PlayLayer::get();
 	return pl && pl->m_isPaused;
 }
+
 inline double getPhysicsDt() { return 1. / tps; }
 extern void calculateSteps(float dt, float targetDt);

@@ -17,9 +17,9 @@ class $modify(LabelPlayLayer, PlayLayer)
         CCLabelBMFont* m_seedLabel = nullptr;
     };
 
-    bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) 
+    bool init(GJGameLevel* level, bool dontCreateObjects) 
     {
-        if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
+        if (!PlayLayer::init(level, dontCreateObjects)) return false;
 
         auto size = cocos2d::CCDirector::sharedDirector()->getWinSize();
 

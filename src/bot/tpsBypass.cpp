@@ -52,7 +52,7 @@ void physStepCountMidhook(SafetyHookContext &ctx)
 {
     if (replayStatus == 2) { return; }
         
-    ctx.rdx = 2 - estimatedStepCount;
+    ctx.r13 = 2 - estimatedStepCount;
 }
 
 void restorePhysDtHook(SafetyHookContext &ctx)
@@ -94,21 +94,10 @@ class $modify(TPSBypassGameLayer, GJBaseGameLayer)
 
 $execute
 {
-    util::midhook(geode::base::get() + 0x237A7C, "physDt", physDtMidhook);
-    util::midhook(geode::base::get() + 0x237DCE, "physStepCount", physStepCountMidhook);
-    util::midhook(geode::base::get() + 0x238F6E, "restorePhysDt", restorePhysDtHook);
+    util::midhook(geode::base::get() + 0x340900, "physDt", physDtMidhook);
+    util::midhook(geode::base::get() + 0x340B18, "physStepCount", physStepCountMidhook);
+    util::midhook(geode::base::get() + 0x341BC7, "restorePhysDt", restorePhysDtHook);
 }
 
-//
-// Offsets for 2.209:
-// physDt 0x33DE71
-// physStepCount 0x33E095
-// restorePhysDt 0x33F157
-//
-// Offsets for 2.2091:
-// physDt 0x340900
-// physStepCount 0x340B18
-// restorePhysDt 0x341BC7
-//
 // Method from silicate v1.1 source
 // Credits to nat
