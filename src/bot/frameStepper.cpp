@@ -1,15 +1,17 @@
 #include "frameStepper.hpp"
-#include "replay.hpp"
+#include "tpsBypass.hpp"
 
 #include <Geode/modify/CCKeyboardDispatcher.hpp>
-#include <Geode/modify/GJBaseGameLayer.hpp>
+#include <Geode/modify/CCScheduler.hpp>
+#include <Geode/modify/PlayLayer.hpp>
 
 using namespace geode::prelude;
 
-$on_game(Loaded) {
+$on_game(Loaded) 
+{
     listenForKeybindSettingPresses("framestepper-toggle", [](Keybind const& keybind, bool down, bool repeat, double timestamp) 
     {
-        if (down && !repeat && replayStatus != 2) { frameStepper = !frameStepper; }
+        if (down && !repeat && replayStatus != 2 && PlayLayer::get()) { frameStepper = !frameStepper; }
     });
 
     listenForKeybindSettingPresses("framestepper-step", [](Keybind const& keybind, bool down, bool repeat, double timestamp) 
@@ -19,15 +21,20 @@ $on_game(Loaded) {
     });
 }
 
-class $modify(FSGJBaseGameLayer, GJBaseGameLayer)
+class $modify(FSPlayLayer, PlayLayer)
+{
+    void onQuit() 
+    {
+        frameStepper = false;
+        PlayLayer::onQuit();
+    }
+};
+
+class $modify(FSCCScheduler, CCScheduler)
 {
     void update(float dt)
     {
-        if (replayStatus != 2)
-        {
-            if (!frameStepper) { GJBaseGameLayer::update(dt); } // update normally
-            else if (frameStepper && shouldStep) { shouldStep = false; GJBaseGameLayer::update( 1.0f / float(tps) ); m_extraDelta = 0.f; } // step the proper amount (1.0 / tps -> deltatime)
-        }
-        else { GJBaseGameLayer::update(dt); }
+        if (!frameStepper || isPaused()) { CCScheduler::update(dt); }
+        else if (frameStepper && shouldStep) { shouldStep = false; CCScheduler::update(dt); }
     }
 };
