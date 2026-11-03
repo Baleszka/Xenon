@@ -49,6 +49,7 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
                     else { stepInputs.push_back({alpha, in.isHolding, in.isPlayer1}); }
                 }
             }
+            
             else
             {
                 for (auto &in : macro)
@@ -57,18 +58,16 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
                 }
             }
         }
+
         GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
     }
-
 };
 
-// Practice fix and macro recording logic
-// Genuinely terrible code don't do ts
 class $modify(ReplayPlayLayer, PlayLayer)
 {
     void resetLevel()
     {
-        if (m_playerDied && replayStatus == 0 || replayStatus == 1)
+        if (replayStatus == 0 || replayStatus == 1 && m_playerDied)
         {
             // Fixes the issue where if you release after dying, because of the other parts of my code clearing queuedButtons, you keep jumping after respawning
             ignoreInputs = true;
@@ -86,134 +85,55 @@ class $modify(ReplayPlayLayer, PlayLayer)
             else { ignoreInputs = false; }
         }
 
-        // Save last queued button before reset for 2p bugfix
-        std::vector<PlayerButtonCommand> m_previouslyQueuedButtons = m_queuedButtons;
-
         PlayLayer::resetLevel();
 
         if (replayStatus == 0)
         {
             if (!cbf)
-            {
-                // Two player bugfix
-                if (this->m_level->m_twoPlayerMode && m_gameState.m_isDualMode)
-                {
-                    // in 2 player mode if reset with both players released, it only queues one players release
-                    // this also queues the other one
-                    if (!m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush && m_previouslyQueuedButtons.empty())
-                    {
-                        queueButton(static_cast<int>(PlayerButton::Jump), false, !m_queuedButtons.back().m_isPlayer2, m_timestamp);
-                    }
-                    
-                    if (macro.size() >= 2)
-                    {
-                        input* lastP1Input = nullptr; input* lastP2Input = nullptr;
-
-                        for (size_t i = macro.size(); i-- > 0; )
-                        {
-                            if (!lastP1Input && macro[i].isPlayer1)  lastP1Input = &macro[i];
-                            if (!lastP2Input && !macro[i].isPlayer1) lastP2Input = &macro[i];
-                            if (lastP1Input && lastP2Input) break;
-                        }
-
-                        // Tn 2 player mode if reset with ONE player released, it queues a p1 push and nothing else
-                        // This queues a release for the player which released before resetting
-                        if (lastP1Input && lastP2Input && lastP1Input->isHolding != lastP2Input->isHolding && m_previouslyQueuedButtons.empty())
-                        {
-                            m_queuedButtons.clear();
-                            if (!lastP1Input->isHolding) { queueButton(static_cast<int>(PlayerButton::Jump), false, false, m_timestamp); }
-                            if (!lastP2Input->isHolding) { queueButton(static_cast<int>(PlayerButton::Jump), false, true, m_timestamp); }
-                        }
-
-                        // In 2 player mode if reset with both players released but one makes an input without advancing any frames
-                        // both go up for some reason
-                        // This adds a release for the player which didnt click
-                        if (lastP1Input && lastP2Input && lastP1Input->isHolding == lastP2Input->isHolding && !m_previouslyQueuedButtons.empty() && m_previouslyQueuedButtons.back().m_isPush)
-                        {
-                            m_queuedButtons.clear();
-                            queueButton(static_cast<int>(PlayerButton::Jump), false, !m_previouslyQueuedButtons.back().m_isPlayer2, m_timestamp);
-                        }
-                        
-                        // If one player was going up and the other started holding but didnt advance any frames before resetting
-                        if (!m_previouslyQueuedButtons.empty() && m_previouslyQueuedButtons.back().m_isPush && lastP1Input && lastP2Input && lastP1Input->isHolding != lastP2Input->isHolding)
-                        {
-                            m_queuedButtons.clear();
-                        }
-
-                        // If one player was going up and the other started holding and also advanced one or more frames before resetting
-                        if (m_previouslyQueuedButtons.empty() && lastP1Input && lastP2Input && lastP1Input->isHolding == lastP2Input->isHolding && lastP1Input->isHolding)
-                        {
-                            m_queuedButtons.clear();
-                        }
-                    }
-                }
-                
+            {   
                 // remove inputs if the frame they were made on is bigger than the frame reset to
                 while (!macro.empty() && macro.back().frame >= getFrame()) { macro.pop_back(); }
 
-                // if last input is a release and queuedButtons' last element is also a release, clear queuedButtons so it doesn't add an unnecessary release
-                if (!m_queuedButtons.empty() && !macro.empty() && !macro.back().isHolding && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
-                
-                // If you're a game mode whos release matters and you're holding while you reset, it doesn't start holding again, rather it ignores it and only adds the release when you release.
-                // This is for gamemodes like wave, ship and robot.
-                // (Technically UFO release matters too because if you do a swift while UFO nothing happens lel)
-                // Don't do this in two player dual mode because it breaks things.
-                if (!(this->m_level->m_twoPlayerMode && m_gameState.m_isDualMode) && !m_queuedButtons.empty() && !macro.empty() && macro.back().isHolding && m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
+                // Note: these are the last inputs saved in the macro after cleaned, not the actual last input made my the player
+                input* lastP1Input = nullptr; input* lastP2Input = nullptr;
 
-                // If you reset to a frame that was before any inputs were made and queuedButtons has a release input, ignore it.
-                // This fixes ghost release.
-                if (macro.empty() && !m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
+                for (size_t i = macro.size(); i-- > 0; )
+                {
+                    if (!lastP1Input && macro[i].isPlayer1) { lastP1Input = &macro[i]; }
+                    if (!lastP2Input && !macro[i].isPlayer1) { lastP2Input = &macro[i]; }
+                    if (lastP1Input && lastP2Input) break;
+                }
+                        
+                // Check what the last inputs were for both players in the macro after clear
+                // No need to restrict p2 hold to 2p dual mode beacuse they get logged seperately regardless
+                bool p1Holding = lastP1Input && lastP1Input->isHolding;
+                bool p2Holding = lastP2Input && lastP2Input->isHolding;
+
+                // Delete queued inputs that match the input the player is already doing
+                std::erase_if(m_queuedButtons, [&](const auto& b) { return b.m_isPush == (b.m_isPlayer2 ? p2Holding : p1Holding); });
+
+                // If you reset to a frame that was before any inputs were made and queuedButtons has a release input, get rid of it
+                // This fixes ghost releases
+                if (macro.empty() && !m_queuedButtons.empty()) { std::erase_if(m_queuedButtons, [](const auto& b) { return !b.m_isPush; }); }
             }
             else
             {
-                if (this->m_level->m_twoPlayerMode && m_gameState.m_isDualMode)
+                while (!cbfMacro.empty() && cbfMacro.back().preciseFrame >= getFrame()) { cbfMacro.pop_back(); }
+                cbfInput* lastP1Input = nullptr; cbfInput* lastP2Input = nullptr;
+
+                for (size_t i = cbfMacro.size(); i-- > 0; )
                 {
-                    if (!m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush && m_previouslyQueuedButtons.empty())
-                    {
-                        queueButton(static_cast<int>(PlayerButton::Jump), false, !m_queuedButtons.back().m_isPlayer2, m_timestamp);
-                    }
-                    
-                    if (cbfMacro.size() >= 2)
-                    {
-                        cbfInput* lastP1Input = nullptr; cbfInput* lastP2Input = nullptr;
-
-                        for (size_t i = cbfMacro.size(); i-- > 0; )
-                        {
-                            if (!lastP1Input && cbfMacro[i].isPlayer1)  lastP1Input = &cbfMacro[i];
-                            if (!lastP2Input && !cbfMacro[i].isPlayer1) lastP2Input = &cbfMacro[i];
-                            if (lastP1Input && lastP2Input) break;
-                        }
-
-                        if (lastP1Input && lastP2Input && lastP1Input->isHolding != lastP2Input->isHolding && m_previouslyQueuedButtons.empty())
-                        {
-                            m_queuedButtons.clear();
-                            if (!lastP1Input->isHolding) { queueButton(static_cast<int>(PlayerButton::Jump), false, false, m_timestamp); }
-                            if (!lastP2Input->isHolding) { queueButton(static_cast<int>(PlayerButton::Jump), false, true, m_timestamp); }
-                        }
-
-                        if (lastP1Input && lastP2Input && lastP1Input->isHolding == lastP2Input->isHolding && !m_previouslyQueuedButtons.empty() && m_previouslyQueuedButtons.back().m_isPush)
-                        {
-                            m_queuedButtons.clear();
-                            queueButton(static_cast<int>(PlayerButton::Jump), false, !m_previouslyQueuedButtons.back().m_isPlayer2, m_timestamp);
-                        }
-                        
-                        if (!m_previouslyQueuedButtons.empty() && m_previouslyQueuedButtons.back().m_isPush && lastP1Input && lastP2Input && lastP1Input->isHolding != lastP2Input->isHolding)
-                        {
-                            m_queuedButtons.clear();
-                        }
-
-                        if (m_previouslyQueuedButtons.empty() && lastP1Input && lastP2Input && lastP1Input->isHolding == lastP2Input->isHolding && lastP1Input->isHolding)
-                        {
-                            m_queuedButtons.clear();
-                        }
-                    }
+                    if (!lastP1Input && cbfMacro[i].isPlayer1) { lastP1Input = &cbfMacro[i]; }
+                    if (!lastP2Input && !cbfMacro[i].isPlayer1) { lastP2Input = &cbfMacro[i]; }
+                    if (lastP1Input && lastP2Input) break;
                 }
 
-                while (!cbfMacro.empty() && cbfMacro.back().preciseFrame >= getFrame()) { cbfMacro.pop_back(); }
+                bool p1Holding = lastP1Input && lastP1Input->isHolding;
+                bool p2Holding = lastP2Input && lastP2Input->isHolding;
 
-                if (!cbfMacro.empty() && !m_queuedButtons.empty() && !cbfMacro.back().isHolding && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
-                if (!cbfMacro.empty() && !m_queuedButtons.empty() && cbfMacro.back().isHolding && m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
-                if (cbfMacro.empty() && !m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush) { m_queuedButtons.clear(); }
+                std::erase_if(m_queuedButtons, [&](const auto& b) { return b.m_isPush == (b.m_isPlayer2 ? p2Holding : p1Holding); });
+
+                if (cbfMacro.empty() && !m_queuedButtons.empty()) { std::erase_if(m_queuedButtons, [](const auto& b) { return !b.m_isPush; }); }
             }
         }
     }
