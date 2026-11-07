@@ -68,14 +68,14 @@ class $modify(LabelPlayLayer, PlayLayer)
         if (!m_gameState.m_isDualMode)
         {
             m_fields->m_xPositionLabel->setString(fmt::format("{}: {:.6f}", xPositionLabel.text, getPlayerPos().x1).c_str());
-            m_fields->m_yPositionLabel->setString(fmt::format("{}: {:.6f}", xPositionLabel.text, getPlayerPos().y1).c_str());
+            m_fields->m_yPositionLabel->setString(fmt::format("{}: {:.6f}", yPositionLabel.text, getPlayerPos().y1).c_str());
             m_fields->m_velocityLabel->setString(fmt::format("{}: {:.3f}", velocityLabel.text, getPlayerVel().x).c_str());
             m_fields->m_rotationLabel->setString(fmt::format("{}: {:.6f}", rotationLabel.text, getPlayerRot().x).c_str());
         }
         else
         {
             m_fields->m_xPositionLabel->setString(fmt::format("{}: {:.6f} / {:.6f}", xPositionLabel.text, getPlayerPos().x1, getPlayerPos().x2).c_str());
-            m_fields->m_yPositionLabel->setString(fmt::format("{}: {:.6f} / {:.6f}", xPositionLabel.text, getPlayerPos().y1, getPlayerPos().y2).c_str());
+            m_fields->m_yPositionLabel->setString(fmt::format("{}: {:.6f} / {:.6f}", yPositionLabel.text, getPlayerPos().y1, getPlayerPos().y2).c_str());
             m_fields->m_velocityLabel->setString(fmt::format("{}: {:.3f} / {:.3f}", velocityLabel.text, getPlayerVel().x, getPlayerVel().y).c_str());
             m_fields->m_rotationLabel->setString(fmt::format("{}: {:.6f} / {:.6f}", rotationLabel.text, getPlayerRot().x, getPlayerRot().y).c_str());
         }
