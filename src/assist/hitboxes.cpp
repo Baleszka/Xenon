@@ -266,6 +266,8 @@ class $modify(HitboxPlayLayer, PlayLayer)
             {
                 drawPlayerHitboxOtherOne(playerNode, this, hitboxTrailArr[i].corners, hitboxTrailArr[i].rect, hitboxTrailArr[i].radius, hitboxTrailArr[i].pos);
             }
+            drawPlayerHitbox(playerNode, this, m_player1);
+            if (m_gameState.m_isDualMode) { drawPlayerHitbox(playerNode, this, m_player2); }
         }
         else
         {

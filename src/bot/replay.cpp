@@ -1,8 +1,8 @@
 #include "replay.hpp"
 #include "../info/gameInfo.hpp"
-#include "../ui/gui.hpp"
 #include "tpsBypass.hpp"
 #include "cbf.hpp"
+#include "frameStepper.hpp"
 
 #include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/modify/PlayLayer.hpp>
@@ -45,7 +45,7 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
                     
                     double alpha = in.preciseFrame - step;
 
-                    if (alpha < 1e-4) { GJBaseGameLayer::handleButton(in.isHolding, static_cast<int>(PlayerButton::Jump), in.isPlayer1); }
+                    if (alpha < 1e-6) { GJBaseGameLayer::handleButton(in.isHolding, static_cast<int>(PlayerButton::Jump), in.isPlayer1); }
                     else { stepInputs.push_back({alpha, in.isHolding, in.isPlayer1}); }
                 }
             }
@@ -86,6 +86,9 @@ class $modify(ReplayPlayLayer, PlayLayer)
         }
 
         PlayLayer::resetLevel();
+
+        // update once after reset because theres one frame after reset where this kid doesnt move and it suxxx
+        if (frameStepper) { shouldStep = true; }
 
         if (replayStatus == 0)
         {
@@ -142,7 +145,7 @@ class $modify(ReplayPlayLayer, PlayLayer)
 void addInput(unsigned long long frame, bool isHolding, bool isPlayer1)
 {
     if (!cbf) { macro.push_back({frame, isHolding, isPlayer1}); }
-    else { cbfMacro.push_back({float(frame), isHolding, isPlayer1}); }
+    else { cbfMacro.push_back({double(frame), isHolding, isPlayer1}); }
 }
 
 void simulateInput(bool isHolding, bool isPlayer1)

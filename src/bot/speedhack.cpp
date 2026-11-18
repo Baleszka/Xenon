@@ -1,5 +1,6 @@
 #include "speedhack.hpp"
 #include "replay.hpp"
+#include "frameStepper.hpp"
 
 #include <Geode/modify/CCScheduler.hpp>
 #include <Geode/modify/FMODAudioEngine.hpp>
@@ -10,7 +11,7 @@ class $modify(SpeedhackCCScheduler, cocos2d::CCScheduler)
 {
     void update(float dt)
     {
-        if (replayStatus != 2) { dt *= speedhack; } // speedhack game
+        if (replayStatus != 2 && !frameStepper) { dt *= speedhack; } // speedhack game
         CCScheduler::update(dt);
     }
 };
