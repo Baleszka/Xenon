@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Geode/Geode.hpp>
+
 #include <string>
 
 using namespace geode::prelude;

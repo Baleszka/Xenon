@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Geode/Geode.hpp>
+
 #include <vector>
 
 using namespace geode::prelude;

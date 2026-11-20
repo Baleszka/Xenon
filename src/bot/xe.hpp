@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Geode/Geode.hpp>
+
 #include "replay.hpp"
 
 #include <filesystem>
