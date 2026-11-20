@@ -31,7 +31,7 @@ void drawPlayerHitbox(cocos2d::CCDrawNode* node, GJBaseGameLayer* pl, PlayerObje
     if (showPlayerCircle) 
     {
         float radius = player->getObjectRect().size.width / 2.0;
-        u_int segments = (u_int)(std::max(radius, 8.0f) * 2.0f * sqrt(pl->m_gameState.m_cameraZoom));
+        unsigned int segments = (u_int)(std::max(radius, 8.0f) * 2.0f * sqrt(pl->m_gameState.m_cameraZoom));
         node->drawCircle(player->getPosition(), radius, {0.0f, 0.0f, 0.0f, 0.0f}, hitboxWidth, {hazardCol[0], hazardCol[1], hazardCol[2], hazardCol[3]}, segments);
     }
 }
