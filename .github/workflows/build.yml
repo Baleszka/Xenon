@@ -13,7 +13,7 @@ jobs:
       matrix:
         config:
           - name: Windows
-            os: windows-latest
+            os: windows-2022
             build-type: RelWithDebInfo
 
     name: ${{ matrix.config.name }}
