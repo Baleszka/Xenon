@@ -19,7 +19,7 @@ namespace themes
 
 	std::size_t& currentThemeIndex()
 	{
-		static std::size_t idx = Mod::get()->getSavedValue<std::size_t>("xenon-theme", 0);
+		static std::size_t idx = Mod::get()->getSavedValue<std::size_t>("xenon-theme", 2);
 		return idx;
 	}
 
@@ -29,6 +29,9 @@ namespace themes
 		if (index < list.size())
 		{
 			log::info("Applying theme {}", index);
+			ImGuiStyle base;
+			ImGui::StyleColorsDark(&base);
+			ImGui::GetStyle() = base;
 			list[index].apply();
 			currentThemeIndex() = index;
 			Mod::get()->setSavedValue<int>("xenon-theme", index);
@@ -58,11 +61,11 @@ namespace themes
 		}
 		applied = true;
 
-		int saved = Mod::get()->getSavedValue<int>("xenon-theme", 0);
+		int saved = Mod::get()->getSavedValue<int>("xenon-theme", 2);
 		log::info("loading theme: {} (count: {})", saved, getThemeCount());
 		if (saved < 0 || static_cast<std::size_t>(saved) >= getThemeCount())
 		{
-			saved = 0;
+			saved = 2;
 		}
 		applyTheme(static_cast<std::size_t>(saved));
 	}
@@ -97,8 +100,22 @@ namespace themes
 		return true;
 	}
 
+	ImVec4 hexColor(unsigned int value, float alpha)
+	{
+		return ImVec4(
+			static_cast<float>((value >> 16) & 0xFF) / 255.0f,
+			static_cast<float>((value >> 8) & 0xFF) / 255.0f,
+			static_cast<float>(value & 0xFF) / 255.0f,
+			alpha);
+	}
+
+	ImVec4 withAlpha(const ImVec4& color, float alpha)
+	{
+		return ImVec4(color.x, color.y, color.z, alpha);
+	}
+
 	// builtin default imgui theme
-	REGISTER_THEME("Default")
+	REGISTER_THEME("ImGui")
 	{
 		ImGui::StyleColorsDark();
 

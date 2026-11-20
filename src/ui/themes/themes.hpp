@@ -12,6 +12,9 @@ namespace themes
 		void (*apply)();
 	};
 
+	ImVec4 hexColor(unsigned int value, float alpha = 1.0f);
+	ImVec4 withAlpha(const ImVec4& color, float alpha);
+
 	std::vector<Theme>& getThemes();
 	std::size_t getThemeCount();
 	std::size_t& currentThemeIndex();
