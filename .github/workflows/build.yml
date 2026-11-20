@@ -1,4 +1,4 @@
-name: Build Xenon
+name: Build Geode Mod
 
 on:
   workflow_dispatch:
@@ -12,41 +12,31 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - name: Windows
-            os: windows-2022
-            build-type: RelWithDebInfo
+        - name: Windows
+          os: windows-latest
 
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v4
 
-      - name: Build
+      - name: Build the mod
         uses: geode-sdk/build-geode-mod@main
         with:
-          export-pdb: false
           combine: true
-          sdk: "given"
           target: ${{ matrix.config.target }}
-          ccache-variant: ccache
-          build-config: ${{ matrix.config.build-type || 'Release' }}
 
   package:
     name: Package builds
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: ['build']
 
     steps:
-      - name: Combine builds
-        uses: geode-sdk/build-geode-mod/combine@main
-        with:
-          zstd: true
-          optimize-pngs: true
+      - uses: geode-sdk/build-geode-mod/combine@main
         id: build
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v4
         with:
           name: Build Output
           path: ${{ steps.build.outputs.build-output }}
