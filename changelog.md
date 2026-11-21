@@ -2,6 +2,9 @@
 - Fixed for 2.2091
 - Migrated to Geode v6.x.x
 - Fixed 2p bugs
+- Improved frame stepper
+- Fixed small hitbox bug
+- New "Xenon" theme
 
 # Alpha.2
 - Custom keybinds
