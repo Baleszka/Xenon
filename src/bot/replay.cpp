@@ -9,8 +9,6 @@
 
 using namespace geode::prelude;
 
-bool ignoreInputs = false;
-
 class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
 {
     void processQueuedButtons(float dt, bool clearInputQueue) 
@@ -19,7 +17,7 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
 
         if (blockInputs && replayStatus == 1) { m_queuedButtons.clear(); } // Block inputs during replay
 
-        if (replayStatus == 0 && !ignoreInputs && !m_queuedButtons.empty())
+        if (replayStatus == 0 && !m_queuedButtons.empty())
         {
             for (auto &in : m_queuedButtons)
             {
@@ -67,22 +65,13 @@ class $modify(ReplayPlayLayer, PlayLayer)
 {
     void resetLevel()
     {
-        if (replayStatus == 0 || replayStatus == 1 && m_playerDied)
+        if (replayStatus != 2 && m_playerDied)
         {
             // Fixes the issue where if you release after dying, because of the other parts of my code clearing queuedButtons, you keep jumping after respawning
-            ignoreInputs = true;
-            if (!m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush && !m_queuedButtons.back().m_isPlayer2)
+            if (!m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush)
             {
-                handleButton(false, static_cast<int>(PlayerButton::Jump), true);
-                ignoreInputs = false;
+                handleButton(false, static_cast<int>(PlayerButton::Jump), !m_queuedButtons.back().m_isPlayer2);
             }
-            else if (!m_queuedButtons.empty() && !m_queuedButtons.back().m_isPush && m_queuedButtons.back().m_isPlayer2)
-            {
-                handleButton(false, static_cast<int>(PlayerButton::Jump), false);
-                ignoreInputs = false;
-            }
-            // if you let go while dead but also start holding before you respawn, it just won't record anything. This fixes that
-            else { ignoreInputs = false; }
         }
 
         PlayLayer::resetLevel();

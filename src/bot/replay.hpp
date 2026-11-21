@@ -24,7 +24,5 @@ inline int replayStatus = 2; // 0 -> record 1 -> replay 2 -> disable
 
 inline bool blockInputs = true;
 
-extern bool ignoreInputs;
-
 void addInput(unsigned long long frame, bool isHolding, bool isPlayer1);
 void simulateInput(bool isHolding, bool isPlayer1);
