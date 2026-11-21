@@ -8,8 +8,23 @@
 	"version": "v1.0.0-alpha.21",
 	"developer": "Baleszka",
 	"description": "Advanced & lightweight bot for GD",
+	"tags": ["gameplay", "cheat", "enhancement", "utility"],
 	"dependencies": {
 		"geode.node-ids": { "version": ">=v1.23.3", "required": false }
+	},
+	"incompatibilities":{
+		"peony.silicate": ">=v0.1.0",
+		"syzzi.click_between_frames": ">=v0.1.0",
+        "zmx.cbf-lite": ">=v0.1.0",
+        "alphalaneous.click_after_frames": ">=v0.1.0",
+        "erymanthus.click_after_frames": ">=v0.1.0",
+        "chizz.velocity-unrounding": ">=v0.1.0",
+		"zilko.xdbot": ">=v0.1.0",
+    	"chagh.tcbot": ">=v0.1.0",
+    	"fig.zbot": ">=v0.1.0",
+    	"kepe.ybot": ">=v0.1.0",
+    	"astralteam.astral": ">=v0.1.0",
+		"chizz.superb-input-precision": ">=v0.1.0"
 	},
 	"settings" : {
 		"open-menu": {
