@@ -57,6 +57,9 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
             }
         }
 
+        // Place the checkpoint on the frame it was queued on
+        if (replayStatus != 2 && pl->m_tryPlaceCheckpoint) { pl->processCheckpoints(); }
+
         GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
     }
 };
