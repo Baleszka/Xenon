@@ -24,7 +24,7 @@ class $modify(FSCCScheduler, CCScheduler)
 {
     void update(float dt)
     {
-        if (!frameStepper || isPaused() || !PlayLayer::get()) { return CCScheduler::update(dt); }
+        if (!frameStepper || isPaused() || !PlayLayer::get() || replayStatus == 2) { return CCScheduler::update(dt); }
         else if (frameStepper && shouldStep) { shouldStep = false; CCScheduler::update( 1.0f / tps ); }
     }
 };
