@@ -31,8 +31,7 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
     void processCommands(float dt, bool isHalfTick, bool isLastTick)
     {
         stepInputs.clear();
-        auto pl = PlayLayer::get();
-        if (replayStatus == 1 && pl && static_cast<GJBaseGameLayer *>(pl) == this)
+        if (replayStatus == 1)
         {
             if (cbf)
             {
@@ -57,8 +56,11 @@ class $modify(RPGJBaseGameLayer, GJBaseGameLayer)
             }
         }
 
-        // Place the checkpoint on the frame it was queued on
-        if (replayStatus != 2 && pl->m_tryPlaceCheckpoint) { pl->processCheckpoints(); }
+        if (auto pl = PlayLayer::get())
+        {
+            // Place the checkpoint on the frame it was queued on
+            if (replayStatus != 2 && pl->m_tryPlaceCheckpoint) { pl->processCheckpoints(); };
+        }
 
         GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
     }
