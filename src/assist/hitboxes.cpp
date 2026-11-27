@@ -9,6 +9,8 @@
 
 using namespace geode::prelude;
 
+bool playtesting = false;
+
 void drawPlayerHitbox(cocos2d::CCDrawNode* node, GJBaseGameLayer* pl, PlayerObject* player)
 {
     auto borderWidth = hitboxWidth / pl->m_gameState.m_cameraZoom;
@@ -199,13 +201,13 @@ void syncToObjectLayer(CCDrawNode* node, GJBaseGameLayer* pl)
     node->setAdditionalTransform(cocos2d::CCAffineTransformConcat(layerToWorld, worldToParent));
 }
 
-class $modify(HitboxStepLayer, GJBaseGameLayer)
+class $modify(HitboxGJBaseGameLayer, GJBaseGameLayer)
 {
     void processCommands(float dt, bool isHalfTick, bool isLastTick)
     {
         GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
 
-        if (!showHitboxes || !hitboxTrail || m_isEditor || !m_player1) { return; }
+        if (!showHitboxes || !hitboxTrail || !m_player1) { return; }
 
         hitboxTrailArr.push_back({m_player1->getOrientedBox()->m_corners, m_player1->getObjectRect(), m_player1->getObjectRect().size.width / 2.0f, m_player1->getPosition(), true});
         if (m_gameState.m_isDualMode && m_player2)
@@ -221,21 +223,21 @@ class $modify(HitboxStepLayer, GJBaseGameLayer)
     }
 };
 
-class $modify(HitboxPlayLayer, PlayLayer) 
+class $modify(HitboxPlayLayer, PlayLayer)
 {
-    struct Fields 
+    struct Fields
     {
-        CCDrawNode* drawNode = nullptr; 
+        CCDrawNode* drawNode = nullptr;
         CCDrawNode* playerDrawNode = nullptr;
     };
 
     void postUpdate(float dt) 
     {
         PlayLayer::postUpdate(dt);
-
-        if (!showHitboxes || replayStatus == 2) 
+        if ((!showHitboxes || replayStatus == 2) && (m_fields->drawNode || m_fields->playerDrawNode)) 
         {
-            if (m_fields->drawNode) { m_fields->drawNode->clear(); m_fields->playerDrawNode->clear(); }
+            m_fields->drawNode->clear();
+            m_fields->playerDrawNode->clear();
             return;
         }
 
@@ -251,40 +253,102 @@ class $modify(HitboxPlayLayer, PlayLayer)
             addChild(m_fields->playerDrawNode, m_objectLayer->getZOrder() + 1);
         }
 
-        auto node = m_fields->drawNode;
-        auto playerNode = m_fields->playerDrawNode;
-        syncToObjectLayer(node, this);
-        syncToObjectLayer(playerNode, this);
-        node->clear();
+        m_fields->drawNode->clear();
+        m_fields->playerDrawNode->clear();
 
-        iterateObjects(this, [&](GameObject* object) { drawLevelHitboxes(node, this, object); });
+        syncToObjectLayer(m_fields->drawNode, this);
+        syncToObjectLayer(m_fields->playerDrawNode, this);
 
-        if (hitboxTrail && showHitboxes)
+        // Level
+        iterateObjects(this, [&](GameObject* object) { drawLevelHitboxes(m_fields->drawNode, this, object); });
+
+        // Hitbox trail
+        for (auto &hitbox : hitboxTrailArr)
         {
-            playerNode->clear();
-            for (int i = 0; i < hitboxTrailArr.size(); i++)
-            {
-                drawPlayerHitboxOtherOne(playerNode, this, hitboxTrailArr[i].corners, hitboxTrailArr[i].rect, hitboxTrailArr[i].radius, hitboxTrailArr[i].pos);
-            }
-            drawPlayerHitbox(playerNode, this, m_player1);
-            if (m_gameState.m_isDualMode) { drawPlayerHitbox(playerNode, this, m_player2); }
+            drawPlayerHitboxOtherOne(m_fields->playerDrawNode, this, hitbox.corners, hitbox.rect, hitbox.radius, hitbox.pos);
         }
-        else
-        {
-            hitboxTrailArr.clear();
-            playerNode->clear();
-            drawPlayerHitbox(playerNode, this, m_player1);
-            if (m_gameState.m_isDualMode) { drawPlayerHitbox(playerNode, this, m_player2); }
-        }
+
+        // Player(s)
+        drawPlayerHitbox(m_fields->playerDrawNode, this, m_player1);
+        if (m_gameState.m_isDualMode) { drawPlayerHitbox(m_fields->playerDrawNode, this, m_player2); }
     }
 
-    void resetLevel() {
+    void resetLevel() 
+    {
         PlayLayer::resetLevel();
         hitboxTrailArr.clear();
-        if (m_fields->drawNode) { m_fields->drawNode->clear(); }
-        if (m_fields->playerDrawNode) { m_fields->playerDrawNode->clear(); }
+    }
+};
+
+
+class $modify(HitboxLevelEditorLayer, LevelEditorLayer)
+{
+    struct Fields
+    {
+        CCDrawNode* drawNode = nullptr;
+        CCDrawNode* playerDrawNode = nullptr;
+    };
+
+    void updateEditor(float dt) 
+    {
+        LevelEditorLayer::updateEditor(dt);
+        if ((!showHitboxes || replayStatus == 2) && (m_fields->drawNode || m_fields->playerDrawNode)) 
+        {
+            m_fields->drawNode->clear();
+            m_fields->playerDrawNode->clear();
+            return;
+        }
+
+        if (!m_fields->drawNode)
+        {
+            m_fields->drawNode = CCDrawNode::create();
+            addChild(m_fields->drawNode, m_objectLayer->getZOrder() + 1);
+        }
+
+        if (!m_fields->playerDrawNode)
+        {
+            m_fields->playerDrawNode = CCDrawNode::create();
+            addChild(m_fields->playerDrawNode, m_objectLayer->getZOrder() + 1);
+        }
+
+        m_fields->drawNode->clear();
+        m_fields->playerDrawNode->clear();
+
+        syncToObjectLayer(m_fields->drawNode, this);
+        syncToObjectLayer(m_fields->playerDrawNode, this);
+
+        // Level
+        iterateObjects(this, [&](GameObject* object) { drawLevelHitboxes(m_fields->drawNode, this, object); });
+
+        // Hitbox trail
+        if (hitboxTrail)
+        {
+            for (auto &hitbox : hitboxTrailArr)
+            {
+                drawPlayerHitboxOtherOne(m_fields->playerDrawNode, this, hitbox.corners, hitbox.rect, hitbox.radius, hitbox.pos);
+            }
+        }
+        
+        // Player(s)
+        if (playtesting)
+        {
+            drawPlayerHitbox(m_fields->playerDrawNode, this, m_player1);
+            if (m_gameState.m_isDualMode) { drawPlayerHitbox(m_fields->playerDrawNode, this, m_player2); }
+        }
     }
 
+    void onStopPlaytest() 
+    {
+        LevelEditorLayer::onStopPlaytest();
+        playtesting = false;
+    }
+
+    void onPlaytest() 
+    {
+        LevelEditorLayer::onPlaytest();
+        hitboxTrailArr.clear();
+        playtesting = true;
+    }
 };
 
 // parts of the code are borrowed from silicate
