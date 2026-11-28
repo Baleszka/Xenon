@@ -263,9 +263,12 @@ class $modify(HitboxPlayLayer, PlayLayer)
         iterateObjects(this, [&](GameObject* object) { drawLevelHitboxes(m_fields->drawNode, this, object); });
 
         // Hitbox trail
-        for (auto &hitbox : hitboxTrailArr)
+        if (hitboxTrail)
         {
-            drawPlayerHitboxOtherOne(m_fields->playerDrawNode, this, hitbox.corners, hitbox.rect, hitbox.radius, hitbox.pos);
+            for (auto &hitbox : hitboxTrailArr)
+            {
+                drawPlayerHitboxOtherOne(m_fields->playerDrawNode, this, hitbox.corners, hitbox.rect, hitbox.radius, hitbox.pos);
+            }
         }
 
         // Player(s)
